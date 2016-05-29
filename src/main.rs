@@ -9,10 +9,23 @@ fn hello_world() {
     println!("Hello, {}!", name);
 }
 
+/// Generates a secret number between [1,100]
+///
+/// Example:
+///
+/// ```
+/// let secret = generate_secret_number();
+/// ```
 fn generate_secret_number() -> u8 {
     rand::thread_rng().gen_range(1, 101)
 }
 
+/// Asks for a number in stdin.
+///
+/// Example:
+/// ```
+/// let number = ask_number();
+/// ```
 fn ask_number() -> u8 {
     println!("Please guess a number: ");
 
