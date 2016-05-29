@@ -10,8 +10,7 @@ fn hello_world() {
 }
 
 fn generate_secret_number() -> u8 {
-    let secret = rand::thread_rng().gen_range(1, 101);
-    secret
+    rand::thread_rng().gen_range(1, 101)
 }
 
 fn ask_number() -> u8 {
