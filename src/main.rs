@@ -68,10 +68,22 @@ fn for_enumerate() {
     }
 }
 
+fn print_odds() {
+    'outer: for x in 0..6 {
+        'inner: for y in 0..6 {
+            if x % 2 == 0 { continue 'outer; } // continues the loop over x
+            if y % 2 == 0 { continue 'inner; } // continues the loop over y
+            println!("x: {}, y: {}", x, y);
+        }
+    }
+}
+
 fn main() {
     hello_world();
     println!("");
     for_enumerate();
+    println!("");
+    print_odds();
     println!("");
 
     let play_game: fn() = play_guess_number;
