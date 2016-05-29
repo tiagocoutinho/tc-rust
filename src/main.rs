@@ -62,8 +62,16 @@ fn play_guess_number() {
     }
 }
 
+fn for_enumerate() {
+    for (i,j) in (5..10).enumerate() {
+        println!("i = {} and j = {}", i, j);
+    }
+}
+
 fn main() {
     hello_world();
+    println!("");
+    for_enumerate();
     println!("");
 
     let play_game: fn() = play_guess_number;
