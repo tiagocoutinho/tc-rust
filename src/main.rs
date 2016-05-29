@@ -52,5 +52,8 @@ fn play_guess_number() {
 fn main() {
     hello_world();
     println!("");
-    play_guess_number();
+
+    let play_game: fn() = play_guess_number;
+
+    play_game();
 }
