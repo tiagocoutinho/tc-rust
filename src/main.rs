@@ -7,7 +7,7 @@ struct Cli {
     path: std::path::PathBuf,
 }
 
-fn main() -> Result<(), std::io::Error> {
+fn main() -> Result<(), Box<dyn std::error::Error>> {
     let cli = Cli::from_args();
     let content = std::fs::read_to_string(&cli.path)?;
     for line in content.lines() {
