@@ -1,6 +1,7 @@
-use log::{info};
+use log::info;
 use structopt::StructOpt;
 use anyhow::{Context, Result};
+
 
 #[derive(StructOpt)]
 struct Cli {
