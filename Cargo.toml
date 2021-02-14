@@ -9,3 +9,5 @@ edition = "2018"
 [dependencies]
 structopt = "*"
 anyhow = "1.0"
+log = "*"
+env_logger = "*"
