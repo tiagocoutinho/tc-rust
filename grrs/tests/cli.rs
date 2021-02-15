@@ -24,3 +24,13 @@ fn find_in_file() -> Result<(), Box<dyn std::error::Error>> {
         .stdout(predicate::str::contains("a brand new\nWith brand\n"));
     Ok(())
 }
+
+#[test]
+fn help_flag() -> Result<(), Box<dyn std::error::Error>> {
+    let mut cmd = Command::cargo_bin("grrs")?;
+    cmd.arg("--help");
+    cmd.assert()
+        .success()
+        .stdout(predicate::str::contains("grrs <pattern> <path>"));
+    Ok(())
+}
