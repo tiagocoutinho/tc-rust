@@ -11,3 +11,7 @@ structopt = "*"
 anyhow = "1"
 log = "*"
 env_logger = "*"
+
+[dev-dependencies]
+assert_cmd = "1"
+predicates = "1"
