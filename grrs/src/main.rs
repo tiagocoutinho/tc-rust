@@ -23,7 +23,7 @@ fn main() -> Result<()> {
         with_context(|| format!("could not read file `{}`", args.path.display()))?;
     info!("loaded `{}`", args.path.display());
     info!("searching for `{}`...", args.pattern);
-    tc_grrs::find_matches(&content, &args.pattern, &mut std::io::stdout()).
+    grrs::find_matches(&content, &args.pattern, &mut std::io::stdout()).
         with_context(|| format!("could not print results!"))?;
     Ok(())
 }

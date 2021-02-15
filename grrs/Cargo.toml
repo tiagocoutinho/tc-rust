@@ -1,5 +1,5 @@
 [package]
-name = "tc-grrs"
+name = "grrs"
 version = "0.1.0"
 authors = ["Jose Tiago Macara Coutinho <coutinhotiago@gmail.com>"]
 edition = "2018"
@@ -8,6 +8,6 @@ edition = "2018"
 
 [dependencies]
 structopt = "*"
-anyhow = "1.0"
+anyhow = "1"
 log = "*"
 env_logger = "*"
