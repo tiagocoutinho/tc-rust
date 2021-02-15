@@ -1,8 +1,9 @@
 use ferris_says::say;
-use std::io::stdout;
+use std::io::{stdout, BufWriter};
 
 fn main() {
-    let mut stdout = stdout();
+    let stdout = stdout();
     let message = "Hello fellow Rustaceans!".as_bytes();
-    say(message, message.len(), &mut stdout).unwrap();
+    let mut writer = BufWriter::new(stdout.lock());
+    say(message, message.len(), &mut writer).unwrap();
 }
