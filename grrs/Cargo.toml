@@ -3,6 +3,12 @@ name = "grrs"
 version = "0.1.0"
 authors = ["Jose Tiago Macara Coutinho <coutinhotiago@gmail.com>"]
 edition = "2018"
+description = "A tool to search files"
+readme = "README.md"
+homepage = "https://github.com/tiagocoutinho/tc-rust"
+repository = "https://github.com/tiagocoutinho/tc-rust"
+keywords = ["cli", "search", "demo"]
+categories = ["command-line-utilities"]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
