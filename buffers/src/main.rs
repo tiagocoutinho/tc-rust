@@ -1,47 +1,46 @@
 use std::fs::File;
 use std::path::PathBuf;
-use std::io::{BufReader, LineWriter, Read, Write, Result};
+use std::io::prelude::*;
+use std::io::{BufReader, Read, Write, Result};
 
 struct Meadowlark {
     path: PathBuf,
-    reader: Option<BufReader<File>>,
-    writer: Option<LineWriter<std::io::Stdout>>,
+    source: Option<File>
 }
 
 impl Meadowlark {
     fn new(path: &str) -> Self {
-        Self { path: PathBuf::from(path), reader: None, writer: None }
+        Self { path: PathBuf::from(path), source: None }
     }
 
     fn open(&mut self) -> Result<()> {
-        let source = File::open(&self.path)?;
-        self.reader = Some(BufReader::new(source));
-        self.writer = Some(LineWriter::new(std::io::stdout()));
+        self.source = Some(File::open(&self.path)?);
         Ok(())
     }
+}
 
-    fn close(&mut self) {
-        // `source` goes out of scope, and the "hello.txt" file gets closed
-        self.reader = None;
-        self.writer = None;
+impl Drop for Meadowlark {
+    fn drop(&mut self) {
+        // eventualy release unsafe resources
+        self.source = None;
     }
 }
 
 impl Write for Meadowlark {
     fn write(&mut self, buf: &[u8]) -> Result<usize> {
-        self.writer.as_mut().unwrap().write_all(buf)?;
+        std::io::stdout().write_all(buf)?;
         Ok(buf.len())
     }
 
     fn flush(&mut self) -> Result<()> {
-        self.writer.as_mut().unwrap().flush()?;
+        std::io::stdout().flush()?;
         Ok(())
     }
 }
 
 impl Read for Meadowlark {
-    fn read(&mut self, _buf: &mut [u8]) -> Result<usize> {
-
+    fn read(&mut self, buf: &mut [u8]) -> Result<usize> {
+        self.source.as_ref().unwrap().read(buf)
     }
 }
 
@@ -52,6 +51,9 @@ fn main() -> Result<()> {
     println!("I am doing some work!");
     meadowlark.flush()?;
     println!("I am dying now. Bye, bye!");
-    meadowlark.close();
+    let mut reader = BufReader::new(meadowlark);
+    let mut line = String::new();
+    let len = reader.read_line(&mut line)?;
+    println!("First line is {} bytes long", len);
     Ok(())
 }
