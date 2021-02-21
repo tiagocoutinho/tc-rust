@@ -1,0 +1,12 @@
+[package]
+name = "cpp-rust"
+version = "0.1.0"
+authors = ["Jose Tiago Macara Coutinho <coutinhotiago@gmail.com>"]
+edition = "2018"
+description = "Toy CXX project"
+
+[dependencies]
+cxx = "1.0"
+
+[build-dependencies]
+cxx-build = "1.0"
