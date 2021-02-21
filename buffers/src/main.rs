@@ -1,7 +1,7 @@
 use std::fs::File;
 use std::path::PathBuf;
 use std::io::prelude::*;
-use std::io::{BufReader, Read, Write, Result};
+use std::io::{BufReader, LineWriter, Read, Write, Result};
 
 struct Meadowlark {
     path: PathBuf,
@@ -26,19 +26,19 @@ impl Drop for Meadowlark {
     }
 }
 
-impl Write for Meadowlark {
+impl Write for &Meadowlark {
     fn write(&mut self, buf: &[u8]) -> Result<usize> {
-        std::io::stdout().write_all(buf)?;
+        std::io::stderr().write_all(buf)?;
         Ok(buf.len())
     }
 
     fn flush(&mut self) -> Result<()> {
-        std::io::stdout().flush()?;
+        std::io::stderr().flush()?;
         Ok(())
     }
 }
 
-impl Read for Meadowlark {
+impl Read for &Meadowlark {
     fn read(&mut self, buf: &mut [u8]) -> Result<usize> {
         self.source.as_ref().unwrap().read(buf)
     }
@@ -47,13 +47,13 @@ impl Read for Meadowlark {
 fn main() -> Result<()> {
     let mut meadowlark = Meadowlark::new("poem.txt");
     meadowlark.open()?;
-    meadowlark.write(b"Hello, World!\nHello 2\nI won't show up until the end")?;
+    let mut reader = BufReader::new(&meadowlark);
+    let mut writer = LineWriter::new(&meadowlark);
+    writer.write(b"Hello, World!\nHello 2\nI won't show up until the end")?;
     println!("I am doing some work!");
-    meadowlark.flush()?;
-    println!("I am dying now. Bye, bye!");
-    let mut reader = BufReader::new(meadowlark);
     let mut line = String::new();
     let len = reader.read_line(&mut line)?;
+    println!("I am dying now. Bye, bye!");
     println!("First line is {} bytes long", len);
     Ok(())
 }
