@@ -1,4 +1,4 @@
-use async_process::Command;
+use async_std::process::Command;
 
 #[async_std::main]
 async fn main() {
