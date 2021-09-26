@@ -3,8 +3,11 @@ name = "supervisor"
 version = "0.1.0"
 authors = ["Jose Tiago Macara Coutinho <coutinhotiago@gmail.com>"]
 edition = "2018"
-
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+license = "GPL-3.0-or-later"
+readme = "../README.md"
+description = "clean simple fast process viewer"
+homepage = "https://nessuent.xyz/bb.html"
+repository = "https://github.com/epilys/bb.git"
 
 [dependencies]
 async-std = { version = "^1.10", features = ["attributes", "unstable"] }
