@@ -3,6 +3,7 @@ use async_std::{
     prelude::*,
     process::{Command, Stdio},
 };
+use std::error::Error;
 
 fn cmd(sleep: u8) -> Command {
     let mut cmd = Command::new("./go.sh");
@@ -10,9 +11,9 @@ fn cmd(sleep: u8) -> Command {
     cmd
 }
 
-async fn non_buffered_output(sleep: u8) {
-    let proc = cmd(sleep).spawn().expect("Error creating process");
-    let mut child_out = proc.stdout.expect("No stdout available!");
+async fn non_buffered_output(sleep: u8) -> Result<(), Box<dyn Error>> {
+    let mut proc = cmd(sleep).spawn()?;
+    let mut child_out = proc.stdout.take().ok_or("no stdout?")?;
     let mut buf = [0_u8; 128];
     let mut out = stdout();
     loop {
@@ -22,8 +23,6 @@ async fn non_buffered_output(sleep: u8) {
                 break;
             }
             Ok(n) => {
-                //print!("{}", std::str::from_utf8(&buf[..n]).expect("ups!"));
-
                 out.write_all(&buf[..n])
                     .await
                     .expect("could not write to stdout!");
@@ -35,22 +34,34 @@ async fn non_buffered_output(sleep: u8) {
             }
         }
     }
-    println!("---END---");
+
+    match proc.try_status()? {
+        None => println!("still running"),
+        Some(status) => println!("exited with: {}", status),
+    }
+    Ok(())
 }
 
-async fn line_output(sleep: u8) {
-    let proc = cmd(sleep).spawn().expect("Error creating process");
-    let child_out = proc.stdout.expect("No stdout available!");
+async fn line_output(sleep: u8) -> Result<(), Box<dyn Error>> {
+    let proc = cmd(sleep).spawn()?;
+    // we partially move but we don't care about proc anymore
+    let child_out = proc.stdout.ok_or("no stdout?")?;
     let reader = BufReader::new(child_out);
     let mut lines = reader.lines();
     while let Some(line) = lines.next().await {
         println!("{}", line.expect("Expected line"));
     }
-    println!("---END---");
+    Ok(())
 }
 
 #[async_std::main]
 async fn main() {
-    non_buffered_output(1).await;
-    line_output(1).await;
+    match non_buffered_output(1).await {
+        Ok(_) => println!("---END---"),
+        Err(e) => println!("Error: {}", e),
+    }
+    match line_output(1).await {
+        Ok(_) => println!("---END---"),
+        Err(e) => println!("Error: {}", e),
+    }
 }
