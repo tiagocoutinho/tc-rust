@@ -17,20 +17,11 @@ async fn non_buffered_output(exec: &str, args: &[&str]) -> Result<(), Box<dyn Er
     let mut buf = [0_u8; 128];
     let mut out = stdout();
     loop {
-        match child_out.read(&mut buf).await {
-            Ok(0) => {
-                println!("---EOF---");
-                break;
-            }
-            Ok(n) => {
-                out.write_all(&buf[..n])
-                    .await
-                    .expect("could not write to stdout!");
-                out.flush().await.expect("failed to flush!");
-            }
-            Err(e) => {
-                println!("Error: {:?}", e);
-                break;
+        match child_out.read(&mut buf).await? {
+            0 => break,
+            n => {
+                out.write_all(&buf[..n]).await?;
+                out.flush().await?;
             }
         }
     }
