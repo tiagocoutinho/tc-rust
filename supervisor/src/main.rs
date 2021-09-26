@@ -5,14 +5,14 @@ use async_std::{
 };
 use std::error::Error;
 
-fn cmd(sleep: u8) -> Command {
-    let mut cmd = Command::new("./go.sh");
-    cmd.arg(sleep.to_string()).stdout(Stdio::piped());
+fn cmd(exec: &str, args: &[&str]) -> Command {
+    let mut cmd = Command::new(exec);
+    cmd.args(args).stdout(Stdio::piped());
     cmd
 }
 
-async fn non_buffered_output(sleep: u8) -> Result<(), Box<dyn Error>> {
-    let mut proc = cmd(sleep).spawn()?;
+async fn non_buffered_output(exec: &str, args: &[&str]) -> Result<(), Box<dyn Error>> {
+    let mut proc = cmd(exec, args).spawn()?;
     let mut child_out = proc.stdout.take().ok_or("no stdout?")?;
     let mut buf = [0_u8; 128];
     let mut out = stdout();
@@ -42,8 +42,8 @@ async fn non_buffered_output(sleep: u8) -> Result<(), Box<dyn Error>> {
     Ok(())
 }
 
-async fn line_output(sleep: u8) -> Result<(), Box<dyn Error>> {
-    let proc = cmd(sleep).spawn()?;
+async fn line_output(exec: &str, args: &[&str]) -> Result<(), Box<dyn Error>> {
+    let proc = cmd(exec, args).spawn()?;
     // we partially move but we don't care about proc anymore
     let child_out = proc.stdout.ok_or("no stdout?")?;
     let reader = BufReader::new(child_out);
@@ -56,11 +56,15 @@ async fn line_output(sleep: u8) -> Result<(), Box<dyn Error>> {
 
 #[async_std::main]
 async fn main() {
-    match non_buffered_output(1).await {
+    const EXEC: &str = "./go.sh";
+    const DELAY: &str = "1";
+    const ARGS: &[&str] = &[DELAY];
+
+    match non_buffered_output(EXEC, ARGS).await {
         Ok(_) => println!("---END---"),
         Err(e) => println!("Error: {}", e),
     }
-    match line_output(1).await {
+    match line_output(EXEC, ARGS).await {
         Ok(_) => println!("---END---"),
         Err(e) => println!("Error: {}", e),
     }
